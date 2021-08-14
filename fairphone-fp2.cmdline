@@ -1,0 +1,1 @@
+earlycon=msm_serial_dm,0xf991e000 PMOS_NO_OUTPUT_REDIRECT clk_ignore_unused pd_ignore_unused cma=500m msm.vram=192m msm.allow_vram_carveout=1 earlyprintk
