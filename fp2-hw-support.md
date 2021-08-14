@@ -21,7 +21,7 @@
 | GPU                            | Adreno 330     | Working           | locally          |
 | Modem                          | msm8974-mss-pil| Working           | v5.6-rc1         |
 | Old Front Camera               | OV2685         | Not working{CCI}  |                  |
-| Old Rear Camera                | OV8865         | No driver{CCI}    |                  |
+| Old Rear Camera                | OV8865         | Not working{CCI}    |                  |
 | New Front Camera               | OV5670         | Not working{CCI}  |                  |
 | New Rear Camera                | OV12870        | No driver{CCI}    |                  |
 
@@ -129,16 +129,20 @@ Further notes: https://gitlab.freedesktop.org/mobile-broadband/libqmi/issues/21
 
 The modem gets detected with ofono but you need to do additional manual setup because it's a Dual SIM device: https://wiki.postmarketos.org/wiki/User:TravMurav/Dual-Sim_QMI_draft
 
+The `msm-modem-uim-selection` package should handle this but hasn't been tested yet.
+
 ## Mobile Data
 
 ~~Upstream kernel contains rmnet core driver (equivalent to downstream `msm_rmnet.c`) but not the platform specific part (or rather transport specific part). `./drivers/net/ethernet/msm/msm_rmnet_bam.c` is (likely) used on downstream msm8974. Newer Qualcomm devices use the IPA driver but 8974 is older than that. The actual transport used is `arch/arm/mach-msm/bam_dmux.c`.~~
 
-Mobile Data is working! At the moment these resources are required:
+Mobile Data is working! ~~At the moment these resources are required:~~
 * https://gitlab.com/postmarketOS/linux-postmarketos/-/commits/qcom-msm8974-5.9.y-bam
 * dual-sim things from Modem section
 * https://gist.github.com/Minecrell/4cc2bfb9fcae18e294386b0a213907d1
 * https://gitlab.com/Minecrell/pmaports/-/commit/2684abff23560dc0b5d8cb9f20baec2a28c3d0a8
 * For APN the following procedure is needed for my SIM card: `./enable-modem && ./online-modem && ./remove-contexts && ./create-internet-context webaut && ./activate-context 1`
+
+The above should all be integrated now.
 
 ## Cameras
 
@@ -146,7 +150,7 @@ There is a driver on the LKML for the CCI ("Camera Control Interface") which sho
 
 Old modules (driver available in mainline):
 * Front: OV2685 (y)
-* Back: OV8865 (n)
+* Back: OV8865 (y)
 
 New modules:
 * Front: OV5670 (y)
@@ -183,6 +187,10 @@ http://www.ti.com/lit/ds/symlink/lm3644.pdf
 
 An initial (unsuccessful) test with out-of-tree patches from flto was done with the following config options: `CONFIG_SLIMBUS`, `CONFIG_SLIM_QCOM_CTRL`, `CONFIG_SLIM_QCOM_NGD_CTRL`, `CONFIG_QCOM_APR`, `CONFIG_SND_SOC_WCD9320`, `CONFIG_SND_SOC_QCOM`, `CONFIG_SND_SOC_LPASS_*`, `CONFIG_SND_SOC_QDSP6_*`, `CONFIG_SND_SOC_MSM8996`.
 
+Headphone audio kind of works with one or both of these branches:
+* https://github.com/z3ntu/linux/commits/flto-msm8974
+* https://github.com/z3ntu/linux/commits/flto-msm8974-5.11
+
 ## Others
 
 See [Brian Masney's Nexus 5 mainline to-do list](https://masneyb.github.io/nexus-5-upstream/TODO.html).
@@ -207,6 +215,7 @@ Base config: `qcom_defconfig`
 | CONFIG_I2C_QCOM_CCI              | Camera Control Interface |
 
 ## cmdline
+
 ```
-rdinit=/init earlycon=msm_serial_dm,0xf991e000 PMOS_NO_OUTPUT_REDIRECT cma=300m msm.vram=200m
+earlycon=msm_serial_dm,0xf991e000 PMOS_NO_OUTPUT_REDIRECT clk_ignore_unused pd_ignore_unused cma=500m msm.vram=192m msm.allow_vram_carveout=1
 ```
