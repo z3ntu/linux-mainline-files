@@ -93,10 +93,10 @@ Regarding FM:
 
 ### MAC addresses
 ```
-$ qmicli -d /dev/modem --dms-get-mac-address wlan
+$ qmicli -d /dev/wwan0qmi0 --dms-get-mac-address wlan
 $ ip link set dev wlan0 address 12:34:56:78:9A:BC
 
-$ qmicli -d /dev/modem --dms-get-mac-address bt
+$ qmicli -d /dev/wwan0qmi0 --dms-get-mac-address bt
 # Note, that the bluetooth mac address is backwards (e.g. BC:9A:78:56:34:12 is actually 12:34:56:78:9A:BC)
 # You can reverse the mac address using the following script:
 $ echo BC:9A:78:56:34:12 | awk 'BEGIN{FS=OFS=":"} {s=$NF; for (i=NF-1; i>=1; i--) s = s OFS $i; print s}'
