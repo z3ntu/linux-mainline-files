@@ -1,1 +1,1 @@
-console=ttyMSM0,115200 PMOS_NO_OUTPUT_REDIRECT clk_ignore_unused pd_ignore_unused
+PMOS_NO_OUTPUT_REDIRECT
