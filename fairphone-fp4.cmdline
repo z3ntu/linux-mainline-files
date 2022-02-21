@@ -1,1 +1,1 @@
-clk_ignore_unused pd_ignore_unused PMOS_NO_OUTPUT_REDIRECT fw_devlink=on fw_devlink.strict=1
+clk_ignore_unused pd_ignore_unused PMOS_NO_OUTPUT_REDIRECT sdhci.debug_quirks=0x40
