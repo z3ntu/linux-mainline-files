@@ -1,1 +1,1 @@
-clk_ignore_unused pd_ignore_unused PMOS_NO_OUTPUT_REDIRECT sdhci.debug_quirks=0x40
+clk_ignore_unused pd_ignore_unused sdhci.debug_quirks=0x40 PMOS_NO_OUTPUT_REDIRECT kernel.tp_printk kernel.fgraph_filters="rx_macro_*,tx_macro_*" console=tty0 console=ttyMSM0
