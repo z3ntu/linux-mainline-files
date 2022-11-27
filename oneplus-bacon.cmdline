@@ -1,0 +1,1 @@
+PMOS_NO_OUTPUT_REDIRECT msm.vram=192m msm.allow_vram_carveout=1
