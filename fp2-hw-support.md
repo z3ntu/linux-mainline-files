@@ -6,28 +6,27 @@
 | Power key                      | pm8941-pwrkey  | Working           | already upstream |
 | Internal storage               | sdhci1         | Working           | v4.15-rc1        |
 | SD card storage                | sdhci2         | Working           | v4.16-rc1        |
-| Old Display                    | otm1902b       | Kind-of working   | locally          |
-| Old Touchscreen                | Synaptics DSX? | Kind-of working   | locally          |
-| New Display                    | s6d6fa1        | Working           | locally          |
-| New Touchscreen                | Ilitek ili2120 | Working           | v5.6-rc2 (no dts)|
+| Old Display                    | otm1902b       | Kind-of working   | out-of-tree      |
+| Old Touchscreen                | Synaptics DSX? | Kind-of working   | out-of-tree      |
+| New Display                    | s6d6fa1        | Working           | out-of-tree      |
+| New Touchscreen                | Ilitek ili2120 | Working           | v5.19-rc1        |
 | Vibration motor                | TI DRV2603     | Working           | v5.3-rc1         |
-| Notification LED               | qpnp / lpg     | Working           | locally          |
-| Magnetometer                   | AK8963         | Not possible{DSP} |                  |
-| Gyroscope & Accelerometer      | LSM330D        | Not possible{DSP} |                  |
-| Proximity & Light              | Murata LT1PA01 | Not possible{DSP} |                  |
+| Notification LED               | qpnp / lpg     | Working           | v6.0-rc1         |
+| Magnetometer                   | AK8963         | No driver{DSP}    |                  |
+| Gyroscope & Accelerometer      | LSM330D        | No driver{DSP}    |                  |
+| Proximity & Light              | Murata LT1PA01 | No driver{DSP}    |                  |
 | WiFi                           | WCN3680/prima  | Working           | v5.6-rc1         |
 | Bluetooth                      | WCN3680        | Working           | v5.6-rc1         |
 | FM                             | WCN3680        | No driver         |                  |
-| GPU                            | Adreno 330     | Working           | locally          |
+| GPU                            | Adreno 330     | Working           | out-of-tree      |
 | Modem                          | msm8974-mss-pil| Working           | v5.6-rc1         |
-| Old Front Camera               | OV2685         | Not working{CCI}  |                  |
-| Old Rear Camera                | OV8865         | Not working{CCI}    |                  |
-| New Front Camera               | OV5670         | Not working{CCI}  |                  |
-| New Rear Camera                | OV12870        | No driver{CCI}    |                  |
+| Old Front Camera               | OV2685         | Working (WIP)     | out-of-tree      |
+| Old Rear Camera                | OV8865         | Working (WIP)     | out-of-tree      |
+| New Front Camera               | OV5670         | Working (WIP)     | out-of-tree      |
+| New Rear Camera                | OV12870        | No driver         |                  |
 
 <references>
-<ref name="DSP">Connected to the DSP and the driver is implemented in the adsp.b10 firmware file.</ref>
-<ref name="CCI">There are some patches for the Camera Control Interface (CCI) which should (at least partially) work on msm8974 (e.g. front camera on hammerhead). I haven't gotten communication with the OV2685 module yet though. Unknown what is wrong/missing, it could be anything from missing power supplies, wrong clock speeds, wrong gpio definitions, etc.</ref>
+<ref name="DSP">Connected to the DSP and the driver is implemented in the ADSP firmware. Would need a kernel or user space implementaion talking QMI to the ADSP to plumb the sensors to user space where it can be used for e.g. rotation.</ref>
 </references>
 
 # Test notes
@@ -146,15 +145,42 @@ The above should all be integrated now.
 
 ## Cameras
 
-There is a driver on the LKML for the CCI ("Camera Control Interface") which should work on msm8974 as well with a few hacks, but I haven't gotten it to work on the FP2 yet in combination with the old front camera, ov2685.
+**Old modules:**
+* Front: OV2685
+* Back: OV8865
 
-Old modules (driver available in mainline):
-* Front: OV2685 (y)
-* Back: OV8865 (y)
+**New modules:**
+* Front: OV5670
+* Back: OV12870 (no sensor driver in Linux)
 
-New modules:
-* Front: OV5670 (y)
-* Back: OV12870 (n)
+The cameras can produce a picture that can be displayed using the libcamera qcam test utility. Possibly other libcamera-based apps also might work.
+
+Currently based on a separate kernel branch (might change), you anyways also need to rebuild your dtb with the correct camera sensors manually enabled. There's no dynamic runtime detection support. Not sure if that's even possible in Linux itself.
+
+Replace `/boot/dtbs/qcom-msm8974pro-fairphone-fp2.dtb` and run `sudo postmarketos-mkinitfs` to update `boot.img` in `/boot/`.
+
+Then you can try running `qcam`:
+```
+# Adjust environment variables to be able to launch app via SSH
+eval $(cat /proc/`pidof phosh`/environ | tr '\0' '\n' | grep -v '^PS1=' | awk '{ print "export \"" $0 "\"" }')
+```
+
+### OV2685
+```
+QT_QPA_PLATFORM=wayland qcam -v -r gles
+```
+
+### OV8865
+```
+v4l2-ctl -d /dev/v4l-subdev19 -c exposure=2500
+QT_QPA_PLATFORM=wayland qcam -v -r gles -s width=3264,height=1836
+```
+(all other sizes don't deliver any data correctly)
+
+### OV5670
+```
+QT_QPA_PLATFORM=wayland qcam -v -r gles -s width=1280,height=720
+```
 
 ## Camera Flash LED
 
@@ -177,7 +203,7 @@ OF_COMPATIBLE_N=1
 MODALIAS=of:Nti,flash0T<NULL>Cti,lm3644
 ```
 
-The situation is more complicated than with the old module as the lm3644 driver takes over parts of the driver controlling pm8941@d300, which might be complicated to solve nicely on mainline.
+The situation seems to be more complicated than with the old module as the lm3644 driver takes over parts of the driver controlling pm8941@d300, which might be complicated to solve nicely on mainline.
 
 The lm3644 is an i2c device sitting on the camera interface i2c bus. There's no driver in mainline for the lm3644 yet.
 
