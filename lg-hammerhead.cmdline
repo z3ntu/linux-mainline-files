@@ -1,1 +1,1 @@
-PMOS_NO_OUTPUT_REDIRECT clk_ignore_unused pd_ignore_unused msm.allow_vram_carveout=1
+PMOS_NO_OUTPUT_REDIRECT clk_ignore_unused pd_ignore_unused cma=256m msm.vram=192m msm.allow_vram_carveout=1

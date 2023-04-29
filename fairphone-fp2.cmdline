@@ -1,1 +1,1 @@
-earlycon=msm_serial_dm,0xf991e000 PMOS_NO_OUTPUT_REDIRECT clk_ignore_unused pd_ignore_unused cma=500m msm.vram=192m msm.allow_vram_carveout=1 earlyprintk
+PMOS_NO_OUTPUT_REDIRECT earlycon=msm_serial_dm,0xf991e000 clk_ignore_unused pd_ignore_unused cma=256m msm.vram=192m msm.allow_vram_carveout=1 console=ttyMSM0 console=tty0

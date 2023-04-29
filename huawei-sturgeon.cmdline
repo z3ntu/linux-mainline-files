@@ -1,1 +1,1 @@
-PMOS_NO_OUTPUT_REDIRECT
+PMOS_NO_OUTPUT_REDIRECT clk_ignore_unused pd_ignore_unused
