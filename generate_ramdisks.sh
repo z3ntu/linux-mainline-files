@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Select mainline kernel variant (if available)
 pmbootstrap config kernel mainline
 
