@@ -1,1 +1,1 @@
-PMOS_NO_OUTPUT_REDIRECT msm.allow_vram_carveout=1 video=320x320,reflect_y clk_ignore_unused pd_ignore_unused
+maxcpus=1 msm.allow_vram_carveout=1 video=320x320,reflect_y earlycon=msm_serial_dm,0xf991f000 keep_bootcon
