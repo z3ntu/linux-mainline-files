@@ -1,1 +1,1 @@
-PMOS_NO_OUTPUT_REDIRECT clk_ignore_unused pd_ignore_unused
+PMOS_NO_OUTPUT_REDIRECT clk_ignore_unused pd_ignore_unused maxcpus=1 msm.allow_vram_carveout=1
