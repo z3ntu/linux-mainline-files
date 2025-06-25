@@ -2,9 +2,6 @@
 
 set -e
 
-# Select mainline kernel variant (if available)
-pmbootstrap config kernel mainline
-
 for device in "$@"; do
     echo "=== Device: $device ==="
     pmbootstrap -y zap
