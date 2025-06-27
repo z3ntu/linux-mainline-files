@@ -1,1 +1,1 @@
-PMOS_NO_OUTPUT_REDIRECT
+console=tty0
